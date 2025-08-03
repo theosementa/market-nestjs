@@ -15,6 +15,12 @@ export class CommandService {
     @InjectRepository(CommandProductEntity) private commandProductRepository: Repository<CommandProductEntity>
   ) { }
 
+  async findAllCommands(): Promise<CommandEntity[]> {
+    return this.commandRepository.find({
+      relations: ['commandProducts', 'commandProducts.product']
+    });
+  }
+
   async createCommand(body: CommandBodyDto): Promise<CommandEntity | null> {
     const products: DuplicatedProductEntity[] = [];
 

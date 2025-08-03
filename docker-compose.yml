@@ -32,26 +32,38 @@ services:
       timeout: 5s
       retries: 5
 
+  gateway:
+    build: ./modules/gateway
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env.docker.gateway
+    environment:
+      PRODUCT_SERVICE_HOST: product-service
+      PRODUCT_SERVICE_PORT: 3001
+      COMMAND_SERVICE_HOST: command-service
+      COMMAND_SERVICE_PORT: 3002
+    depends_on:
+      - product-service
+      - command-service
+      - rabbitmq
+
   product-service:
     build: ./modules/product-service
     ports:
       - "3001:3000"
+      - "3101:3001"
     env_file:
-      - .env.docker.product
-    depends_on:
-      rabbitmq:
-        condition: service_healthy
+      - .env.docker.product 
 
   command-service:
     build: ./modules/command-service
     ports:
       - "3002:3000"
+      - "3102:3002"
     env_file:
       - .env.docker.command
-    depends_on:
-      rabbitmq:
-        condition: service_healthy
-  
+
 volumes:
   market-product-database:
   market-command-database:

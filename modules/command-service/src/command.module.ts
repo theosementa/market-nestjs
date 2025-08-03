@@ -1,11 +1,14 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { ClientsModule, Transport } from '@nestjs/microservices';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { CommandController } from './command.controller';
 import { CommandService } from './command.service';
-import { ConfigModule } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { DuplicatedProductService } from './duplicated-products/duplicated-product.service';
+import { ProductMessageController } from './duplicated-products/product-message.controller';
+import { CommandProductEntity } from './models/entities/command-product.entity';
 import { CommandEntity } from './models/entities/command.entity';
 import { DuplicatedProductEntity } from './models/entities/duplicated-product.entity';
-import { CommandProductEntity } from './models/entities/command-product.entity';
 
 @Module({
   imports: [
@@ -20,9 +23,20 @@ import { CommandProductEntity } from './models/entities/command-product.entity';
       entities: [CommandEntity, DuplicatedProductEntity, CommandProductEntity],
       synchronize: true, // TODO: à désactiver en production
     }),
-    TypeOrmModule.forFeature([CommandEntity, DuplicatedProductEntity, CommandProductEntity])
+    TypeOrmModule.forFeature([CommandEntity, DuplicatedProductEntity, CommandProductEntity]),
+    ClientsModule.register([
+      {
+        name: 'PRODUCT_SERVICE',
+        transport: Transport.RMQ,
+        options: {
+          urls: [process.env.RABBIT_MQ ?? ""],
+          queue: 'product_queue',
+          queueOptions: { durable: false },
+        },
+      },
+    ]),
   ],
-  controllers: [CommandController],
-  providers: [CommandService],
+  controllers: [CommandController, ProductMessageController],
+  providers: [CommandService, DuplicatedProductService],
 })
 export class CommandModule {}
