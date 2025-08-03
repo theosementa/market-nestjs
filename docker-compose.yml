@@ -1,0 +1,44 @@
+services:
+  market-product-database:
+    image: postgres:15
+    env_file:
+      - .env.docker.product
+    ports:
+      - "5433:5432"
+    volumes:
+      - market-product-database:/var/lib/postgresql/data
+
+  market-command-database:
+    image: postgres:15
+    env_file:
+      - .env.docker.command
+    ports:
+      - "5434:5432"
+    volumes:
+      - market-command-database:/var/lib/postgresql/data
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: RABBIT_MQ
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: user
+      RABBITMQ_DEFAULT_PASS: password
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  gateway:
+    build: ./modules/gateway
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env.docker.gateway
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+  
