@@ -55,6 +55,9 @@ services:
       - "3101:3001"
     env_file:
       - .env.docker.product 
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
 
   command-service:
     build: ./modules/command-service
@@ -63,6 +66,9 @@ services:
       - "3102:3002"
     env_file:
       - .env.docker.command
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
 
 volumes:
   market-product-database:

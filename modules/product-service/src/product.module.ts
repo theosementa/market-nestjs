@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProductEntity } from './models/entities/product.entity';
 import { ProductController } from './product.controller';
 import { ProductService } from './product.service';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 
 @Module({
   imports: [
@@ -18,7 +19,20 @@ import { ProductService } from './product.service';
       entities: [ProductEntity],
       synchronize: true, // TODO: à désactiver en production
     }),
-    TypeOrmModule.forFeature([ProductEntity])
+    TypeOrmModule.forFeature([ProductEntity]),
+    ClientsModule.register([
+      {
+        name: 'PRODUCT_SERVICE',
+        transport: Transport.RMQ,
+        options: {
+          urls: [process.env.RABBIT_MQ ?? ""],
+          queue: 'products_queue',
+          queueOptions: {
+            durable: false,
+          },
+        },
+      },
+    ]),
   ],
   controllers: [ProductController],
   providers: [ProductService],

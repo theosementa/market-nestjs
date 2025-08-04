@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DuplicatedProductEntity } from 'src/models/entities/duplicated-product.entity';
 import { Repository } from 'typeorm';
+import { DuplicatedProductEntity } from '../models/entities/duplicated-product.entity';
 
 @Injectable()
 export class DuplicatedProductService {
@@ -15,7 +15,6 @@ export class DuplicatedProductService {
       name: data.name,
       price: data.price
     });
-    console.log('All products in database:', await this.duplicatedProductRepository.find());
     return this.duplicatedProductRepository.save(duplicatedProduct);
   }
 

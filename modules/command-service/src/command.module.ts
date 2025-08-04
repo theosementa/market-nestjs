@@ -26,11 +26,11 @@ import { DuplicatedProductEntity } from './models/entities/duplicated-product.en
     TypeOrmModule.forFeature([CommandEntity, DuplicatedProductEntity, CommandProductEntity]),
     ClientsModule.register([
       {
-        name: 'PRODUCT_SERVICE',
+        name: 'RABBITMQ_SERVICE',
         transport: Transport.RMQ,
         options: {
           urls: [process.env.RABBIT_MQ ?? ""],
-          queue: 'product_queue',
+          queue: 'products_queue',
           queueOptions: { durable: false },
         },
       },

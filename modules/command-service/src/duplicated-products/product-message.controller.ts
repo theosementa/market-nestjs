@@ -8,19 +8,16 @@ export class ProductMessageController {
 
   @EventPattern('product_created')
   async handleProductCreated(@Payload() data: { productId: number; name: string; price: number }) {
-    console.log('Produit créé reçu:', data);
     await this.duplicatedProductService.createDuplicatedProduct(data);
   }
 
   @EventPattern('product_updated')
   async handleProductUpdated(@Payload() data: { productId: number; name: string; price: number }) {
-    console.log('Produit mis à jour reçu:', data);
     await this.duplicatedProductService.updateDuplicatedProduct(data);
   }
 
   @EventPattern('product_deleted')
   async handleProductDeleted(@Payload() data: { productId: number }) {
-    console.log('Produit supprimé reçu:', data);
     await this.duplicatedProductService.deleteDuplicatedProduct(data.productId);
   }
 }
