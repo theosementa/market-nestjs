@@ -1,7 +1,7 @@
-import { UUID } from "typeorm/driver/mongodb/bson.typings.js";
+import { randomUUID } from 'crypto';
 
 export class CommandBodyDto {
-  commandNumber: string = new UUID().toString()
+  commandNumber: string = randomUUID();
   date: Date = new Date();
   productsIds: string[]
 }

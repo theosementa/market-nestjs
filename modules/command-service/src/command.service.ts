@@ -35,10 +35,7 @@ export class CommandService {
       throw new Error('No valid products found for the command');
     }
 
-    const command = this.commandRepository.create({
-      commandNumber: body.commandNumber,
-      createdAt: body.date
-    });
+    const command = this.commandRepository.create(new CommandBodyDto());
     const savedCommand = await this.commandRepository.save(command);
 
     const commandProducts: CommandProductEntity[] = [];
